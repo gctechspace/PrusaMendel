@@ -17,6 +17,7 @@ include <metric.scad>;
 
 // CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM
 
+Xtra = 0.1; // A minimal value to project contained objects out past their containing objects
 thin_wall = 3;
 
 
