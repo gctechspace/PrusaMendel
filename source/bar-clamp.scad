@@ -1,35 +1,30 @@
-// PRUSA Mendel  
-// Bar clamp
-// Used for joining 8mm rods
+// Prusa Mendel
+// bar clamp
+// Used for joining 8mm threaded or unthreaded rods
 // GNU GPL v3
-// Josef Průša
-// josefprusa@me.com
-// prusadjs.cz
-// http://www.reprap.org/wiki/Prusa_Mendel
-// http://github.com/prusajr/PrusaMendel
+// David Tangye
+// DavidTangye@gmail.com
+// http://DavidTangye.info
+// http://github.com/DavidTangye/PrusaMendelDT
 
-include <configuration.scad>
+// Filament required: 782.1mm (5.5cm3)
 
-/**
- * @id bar-clamp
- * @name Bar clamp
- * @category Printed
- * @using 2 m8nut
- * @using 2 m8washer
- */ 
+include <PrusaMendelDT-global.scad>
 
 // Main adjustments - all assume mm.
-Height = 25;	// Adjust for strength: 12 - 35, recommend 15 - 25
-DonutThickness = 6; // Adjust for strength :recommend 5 - 7
-JawTightness = 0.5; // Adjust: mm that the jaw reduces on the rod hole: 3 for new builds, 0.5 for replacements?
-zHoleTightness = 0.5; // Adjust: mm (diameter) to reduce the hole to grip the threaded Rod. Old equivalent = 0.8
+Height = 19;	// Adjust for strength: 12 - 35, recommend 15 - 25
+DonutThickness = 4; // Adjust for strength :recommend 5 - 7
+JawGap = 1.5; // Adjust: the wider the gap the more the jaw will be flexed/deformed by nuts
+yHoleLoose = 0.4; // 0 = requires to be screwed in, 0.4 slides over threaded rod
+zHoleLoose = 0.25; // 0 = needs to be prized open, 0.2 = firm
 
-Faces = 20; // Adjust for smoothness
+Faces = 40; // Adjust for smoothness
+$fn = Faces;
 
 // These should not need changing for Prusas
-CrossBarGap = 1.95; // Standard for Prusas
-zHoleD = threaded_rod_diameter - zHoleTightness;
-yHoleD = threaded_rod_diameter;
+CrossBarGap = 2.0; // Standard for Prusas
+zHoleD = M8Diam + zHoleLoose;
+yHoleD = M8Diam + yHoleLoose;
 
 // Miscellaneous variables
 yDim = (2 * DonutThickness) + zHoleD; // Total y dimension
@@ -39,16 +34,16 @@ module barClamp() {
 //	translate([yDim / 2,0,Height / 2])
 	difference(){
 		union(){
-			cylinder(h = Height, r = yDim / 2, center = true, $fn = Faces);
+			cylinder(h = Height, r = yDim / 2, center = true);
 			translate([0, -yDim / 2, -Height / 2])
 				cube([(zHoleD + yHoleD) / 2 + CrossBarGap,yDim,Height]);
 			translate([zHoleD / 2 + CrossBarGap + (0.65 * yHoleD), yDim / 2, 0])
 				rotate([90, 0, 0])
-				nut(Height,yDim,true);
+				nut(Height,yDim,false);
 		}
-		#cylinder(h = 2 * Xtra + Height, r = zHoleD / 2, center = true, $fn = Faces);
-		translate([0, -(zHoleD - JawTightness) / 2, -Height / 2 - Xtra])
-			cube([zHoleD + CrossBarGap + Height,zHoleD - JawTightness,2 * Xtra + Height], center=false);
+		cylinder(h = 2 * Xtra + Height, r = zHoleD / 2, center = true);
+		translate([0, -(JawGap) / 2, -Height / 2 - Xtra])
+			cube([zHoleD + CrossBarGap + Height,JawGap,2 * Xtra + Height], center=false);
 		translate([(zHoleD + yHoleD) / 2 + CrossBarGap, -yDim / 2 - Xtra, 0])
 			rotate([270, 0, 0])
 			cylinder(h = 2 * Xtra + yDim, r = yHoleD / 2);
